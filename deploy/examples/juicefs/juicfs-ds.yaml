@@ -1,0 +1,24 @@
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: juicefs-daemonset
+spec:
+  selector:
+    matchLabels:
+      app: juicefs
+  template:
+    metadata:
+      labels:
+        app: juicefs
+    spec:
+      containers:
+        - name: juicefs-client
+          image: juicedata/juicefs:latest
+          volumeMounts:
+            - name: juicefs-config
+              mountPath: /etc/juicefs
+      volumes:
+        - name: juicefs-config
+          configMap:
+            name: juicefs-config
+

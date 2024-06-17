@@ -1,0 +1,62 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: juicefs-redis
+  namespace: kube-system
+spec:
+  replicas: 1
+  serviceName: juicefs-redis-svc
+  selector:
+    matchLabels:
+      name: juicefs-redis
+  template:
+    metadata:
+      labels:
+        name: juicefs-redis
+    spec:
+      volumes:
+        - name: host-time
+          hostPath:
+            path: /etc/localtime
+            type: ''
+        - name: data
+          persistentVolumeClaim:
+            claimName: juicefs-redis-pvc1
+        - name: redis-config
+          configMap:
+            name: juicefs-redis-config
+      initContainers:
+      - name: init-redis
+        image: busybox
+        command: ['sh', '-c', 'mkdir -p /data/middleware-data/redis/log/;mkdir -p /data/middleware-data/redis/conf/;mkdir -p /data/middleware-data/redis/data/']
+        volumeMounts:
+        - name: data
+          mountPath: /data/middleware-data/redis/
+        resources:
+            limits:
+              cpu: 250m
+              memory: 64Mi
+            requests:
+              cpu: 125m
+              memory: 32Mi
+      containers:
+      - name: redis
+        image: redis:5.0.6
+        imagePullPolicy: IfNotPresent
+        command:
+        - sh
+        - -c
+        - "exec redis-server /data/middleware-data/redis/conf/redis.conf"
+        ports:
+        - containerPort: 6379
+          name: redis
+          protocol: TCP
+        volumeMounts:
+        - name: redis-config
+          mountPath: /data/middleware-data/redis/conf/
+        - name: data
+          mountPath: /data/middleware-data/redis/
+        - name: host-time
+          readOnly: true
+          mountPath: /etc/localtime
+

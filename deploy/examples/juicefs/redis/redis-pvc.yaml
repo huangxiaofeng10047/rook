@@ -1,0 +1,15 @@
+kind: PersistentVolumeClaim
+apiVersion: v1
+metadata:
+  name: juicefs-redis-pvc1
+  namespace: kube-system
+  annotations:
+    volume.beta.kubernetes.io/storage-provisioner: nfs-provisioner-01
+spec:
+  accessModes:
+    - ReadWriteMany
+  resources:
+    requests:
+      storage: 10Gi
+  storageClassName: nfs-zk
+

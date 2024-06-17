@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: juicefs-config
+data:
+  juicefs.conf: |
+    [juicefs]
+    accessKey = OTc3NFo2QzBaVEFVM0xYTUQ0OFU=
+    secretKey = RVRlTDVORGE2RHRKdUxMYnh0YUlGUFBCbG5EclZodGhtbDZDVUhVNg==
+    master = http://rook-ceph-rgw-my-store.rook-ceph.svc
+
